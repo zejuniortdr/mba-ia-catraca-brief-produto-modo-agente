@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 
 from app import auth, db, gateway
+from app.checkin import router as checkin_router
 from app.events import router as events_router
 from app.partner_api import Unauthorized
 from app.partner_api import router as partner_router
@@ -54,6 +55,7 @@ def create_app() -> FastAPI:
 
     app.include_router(router)
     app.include_router(events_router)
+    app.include_router(checkin_router)
     app.include_router(shop_router)
     app.include_router(partner_router)
     return app

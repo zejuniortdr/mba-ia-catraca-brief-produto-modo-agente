@@ -46,10 +46,10 @@
       "name": "Check-in",
       "wave": 5,
       "dir": "docs/features/F05-checkin",
-      "status": "pending",
+      "status": "done",
       "branch": "feat/f05-checkin",
-      "pr": null,
-      "latestReport": null
+      "pr": 9,
+      "latestReport": "docs/features/F05-checkin/reports/20261126-1427-b8cfdc1.md"
     },
     {
       "id": "F06",
