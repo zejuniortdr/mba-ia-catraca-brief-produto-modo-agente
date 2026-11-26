@@ -3,7 +3,6 @@
 [![CI](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/actions/workflows/ci.yml)
 ![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
-![Jinja2](https://img.shields.io/badge/Jinja2-templates-B41717)
 ![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 ![pytest](https://img.shields.io/badge/tests-pytest-0A9EDC?logo=pytest&logoColor=white)
