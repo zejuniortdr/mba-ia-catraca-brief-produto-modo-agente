@@ -1,2 +1,101 @@
-# mba-ia-catraca-brief-produto-modo-agente
-Projeto do MBA em IA
+# Catraca — do brief ao produto em modo agente
+
+Venda de ingressos para eventos pequenos (shows em bar, workshops, meetups). O MVP foi construído por agentes a partir do brief em [`docs/enunciado.md`](docs/enunciado.md). Cada feature tem spec, plano e contrato, e foi aprovada por um avaliador diferente de quem a implementou.
+
+## Como rodar
+
+**Pré-requisitos:** Linux ou macOS com bash, Docker (com Compose v2) e Git. Não é preciso Python nem Node no host, porque tudo roda em container.
+
+| O quê | Comando |
+|---|---|
+| Subir tudo (build, banco, app e seed) | `./scripts/up.sh` |
+| Derrubar tudo | `./scripts/down.sh` |
+| Gates (ruff + pytest contra Postgres real, em projeto compose isolado) | `./scripts/gates.sh` |
+
+A subida não pede nenhum outro passo. O gateway de pagamento é simulado e não precisa de chave real.
+
+O `./scripts/down.sh` para e remove os containers do produto e dos gates. O volume do banco é mantido, então, ao subir de novo, a seed roda outra vez sobre os dados existentes sem erro. Para usar outra porta, rode `WEB_PORT=8080 ./scripts/up.sh`.
+
+## Endereços
+
+| | URL |
+|---|---|
+| Produto (`$WEB`) | http://localhost:8000 |
+| API de parceiros (`$API`) | http://localhost:8000 (rotas em `/api/partner/...`) |
+
+## Credenciais
+
+| Conta | E-mail | Senha |
+|---|---|---|
+| Organizador A | `org.a@catraca.local` | `catraca123` |
+| Organizador B | `org.b@catraca.local` | `catraca123` |
+| Participante da seed | `participante@catraca.local` | `catraca123` |
+| Chave de parceiro (`$KEY`, cabeçalho `X-Api-Key`) | `catraca-parceiro-2026` | |
+
+```bash
+curl -s -H "X-Api-Key: catraca-parceiro-2026" http://localhost:8000/api/partner/events
+```
+
+## Mapa dos artefatos
+
+| Artefato | Caminho |
+|---|---|
+| Brief | [`docs/enunciado.md`](docs/enunciado.md) |
+| PRD (features, Provê/Consome, grafo, waves, critérios, cross-feature, fora de escopo) | [`docs/PRD.md`](docs/PRD.md) |
+| Design aprovado e plano mestre | [`docs/planning/design.md`](docs/planning/design.md), [`docs/planning/master-plan.md`](docs/planning/master-plan.md) |
+| Estado do projeto | [`docs/state.json`](docs/state.json) |
+| Porta de entrada dos agentes | [`AGENTS.md`](AGENTS.md) ([`CLAUDE.md`](CLAUDE.md) aponta para ele) |
+| Receitas de avaliação e template de relatório | [`docs/features/_eval-recipes.md`](docs/features/_eval-recipes.md), [`docs/features/_report-template.md`](docs/features/_report-template.md) |
+
+Cada pasta de feature tem `spec.md`, `plan.md`, `contract.md` e `reports/`:
+
+| ID | Feature | Wave | Pasta | PR |
+|---|---|---|---|---|
+| F01 | Fundação (harness, contas, acesso) | W1 | [`docs/features/F01-fundacao/`](docs/features/F01-fundacao/) | [#4](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/pull/4) |
+| F02 | Eventos do organizador | W2 | [`docs/features/F02-eventos/`](docs/features/F02-eventos/) | [#5](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/pull/5) |
+| F03 | Vitrine e compra | W3 | [`docs/features/F03-compra/`](docs/features/F03-compra/) | [#6](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/pull/6) |
+| F04 | API de parceiros | W4 | [`docs/features/F04-api-parceiros/`](docs/features/F04-api-parceiros/) | [#7](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/pull/7) |
+| F05 | Check-in | **W5 (paralela)** | [`docs/features/F05-checkin/`](docs/features/F05-checkin/) | [#9](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/pull/9) |
+| F06 | Cancelamento | **W5 (paralela)** | [`docs/features/F06-cancelamento/`](docs/features/F06-cancelamento/) | [#10](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/pull/10) |
+| F07 | Painel | **W5 (paralela)** | [`docs/features/F07-painel/`](docs/features/F07-painel/) | [#8](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/pull/8) |
+
+**PRs da wave paralela W5:** [#8](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/pull/8) (F07), [#9](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/pull/9) (F05), [#10](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/pull/10) (F06). As três features foram implementadas ao mesmo tempo, cada uma na própria branch e no próprio worktree. Os primeiros commits caíram entre 17:22:37Z e 17:22:49Z, todos antes dos últimos commits dos outros PRs. Na integração, o conflito em `app/main.py` (registro dos routers de F05 e F06) foi resolvido no PR #10, mantendo os dois.
+
+## Decisões
+
+**Stack: Python 3.12 + FastAPI + Jinja2 (HTML no servidor) + Postgres 16 + psycopg 3 com SQL direto, tudo em docker compose.** O avaliador só tem Docker, Git e Node, então qualquer runtime precisa rodar em container. Um serviço só, com HTML renderizado no servidor, tem menos peças do que uma SPA separada, e nenhum critério avalia design. O Postgres foi escolhido pelo lock de linha que R07 exige. SQL direto deixa os locks explícitos no código.
+
+**R07 sob concorrência.** Toda operação que muda ocupação ou lotação abre uma transação e trava a linha do evento com `SELECT ... FROM events WHERE id=%s FOR UPDATE`:
+- a compra, pela vitrine ou pela API ([`app/purchases.py`](app/purchases.py));
+- a edição de lotação ([`app/events.py`](app/events.py));
+- o cancelamento ([`app/cancellation.py`](app/cancellation.py)).
+
+Com o lock em mãos, a compra conta os ingressos reais `pending` + `confirmed`. Se não houver vaga, responde `sold_out`; se houver, insere o ingresso e faz commit. Compras do mesmo evento entram em fila e eventos diferentes não se bloqueiam. Não existe contador desnormalizado que possa dessincronizar.
+
+A prova está no teste `test_burst_30_capacity_5` (5 rodadas de 30 POSTs simultâneos na API, cada rodada num evento novo de lotação 5, resultando em 5×202 e 25×409) e no `test_concurrent_purchases_never_exceed_capacity` (mesma carga no serviço, com uma conexão do pool por compra). Os dois rodam nos gates. Os avaliadores também repetiram a rajada com `curl` + `xargs -P 30` em 5 eventos novos.
+
+**Resposta assíncrona do gateway** ([`app/gateway.py`](app/gateway.py)):
+- Na compra, o gateway simulado decide pelo final do cartão se aprova ou recusa e sorteia o atraso dentro da faixa do brief. A decisão e o prazo (`gateway_due_at`) são gravados no ingresso.
+- Depois do commit, uma `asyncio` task do próprio processo dorme até o prazo e roda `UPDATE tickets SET status=... WHERE id=%s AND status='pending'`. Por isso a compra responde na hora, com o ingresso pendente.
+- O `WHERE status='pending'` garante que uma resposta que chegue depois do cancelamento não mude o status do ingresso (R11). O cancelamento muda tudo na mesma transação: `confirmed` passa a `refunded` e `pending` passa a `cancelled`.
+- No startup, `reschedule_pending()` reagenda os pendentes, então um reinício do container não deixa ingresso preso.
+- `GATEWAY_DELAY_SCALE` (padrão `1.0`) só é reduzido nos testes.
+
+**Isolamento da avaliação.** Uma sessão do Claude Code orquestrou o trabalho. Ela não implementou código de produto, só resolveu o conflito de merge da W5. Para cada feature:
+1. Um subagente implementador novo (Claude Code, modelo Sonnet) recebeu só `spec.md`, `plan.md` e `contract.md`. Ele implementou com TDD no próprio worktree e abriu o PR, sem permissão para escrever relatório.
+2. Outro subagente novo (Claude Code, modelo Opus), de contexto vazio, sem acesso à conversa do implementador, recebeu só o caminho da branch, o sha e o contrato.
+3. O avaliador clonou o sha num diretório limpo, subiu o produto numa porta própria e executou cada item do contrato com `curl`, `psql` e gates.
+4. Ele escreveu um relatório novo em `reports/<data>-<sha7>.md` e fez commit só desse arquivo.
+
+Relatórios nunca são editados. Cada um aparece em um único commit:
+
+```bash
+git log --format="%h %ad" --date=iso -- docs/features/F01-fundacao/reports/
+```
+
+O `docs/state.json` aponta para o relatório mais recente de cada feature.
+
+## Regras de entrega
+
+- Um projeto por repositório; tudo na branch `main`.
+- Cada feature entrou na `main` por PR com merge commit (sem squash). Os PRs da wave paralela (#8, #9, #10) continuam visíveis no GitHub, mesmo com as branches apagadas depois do merge.
