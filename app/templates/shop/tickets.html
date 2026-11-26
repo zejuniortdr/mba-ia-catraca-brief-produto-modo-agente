@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}<h1>Meus ingressos</h1>
+<table>
+{% for t in tickets %}<tr data-ticket-id="{{ t.id }}"><td class="event">{{ t.event_name }}</td><td class="status">{{ t.status | status_label }}</td><td class="code">{{ t.code }}</td></tr>
+{% endfor %}
+</table>{% endblock %}

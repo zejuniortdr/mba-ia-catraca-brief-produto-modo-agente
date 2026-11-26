@@ -15,7 +15,16 @@ def format_brl(cents: int) -> str:
     return f"R$ {reais:,}".replace(",", ".") + f",{c:02d}"
 
 
-STATUS_LABELS = {"draft": "rascunho", "published": "publicado", "cancelled": "cancelado"}
+# event and ticket statuses share one dict ("cancelled" reads the same in both)
+STATUS_LABELS = {
+    "draft": "rascunho",
+    "published": "publicado",
+    "cancelled": "cancelado",
+    "pending": "pendente",
+    "confirmed": "confirmado",
+    "declined": "recusado",
+    "refunded": "estornado",
+}
 
 templates.env.filters["brl"] = format_brl
 templates.env.filters["status_label"] = lambda s: STATUS_LABELS[s]

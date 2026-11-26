@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}<h1>{{ event.name }}</h1>
+<p>{{ event.starts_at.astimezone(tz).strftime('%d/%m/%Y %H:%M') }} — {{ event.venue }} — {{ event.price_cents | brl }}</p>
+{% if sold_out %}<p id="sold-out">Ingressos esgotados</p>
+{% else %}
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+<form id="buy-form" method="post" action="/events/{{ event.id }}/buy">
+  <label>Número do cartão <input name="card_number" inputmode="numeric" required></label>
+  <button type="submit">Comprar</button>
+</form>
+{% endif %}{% endblock %}
