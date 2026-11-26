@@ -8,6 +8,7 @@ from fastapi.responses import RedirectResponse
 from psycopg import AsyncConnection
 
 from app import auth, db
+from app.panel import panel_metrics
 from app.seats import occupied_seats
 from app.web import render
 
@@ -69,7 +70,7 @@ async def list_by_organizer(conn: AsyncConnection, organizer_id: str) -> list[di
 
 
 async def manage_context(request: Request, conn: AsyncConnection, event: dict, user: dict) -> dict:
-    return {"request": request, "user": user, "event": event, "errors": []}
+    return {"request": request, "user": user, "event": event, "errors": [], "panel": await panel_metrics(conn, event)}
 
 
 def render_manage(ctx: dict, status_code: int = 200):
