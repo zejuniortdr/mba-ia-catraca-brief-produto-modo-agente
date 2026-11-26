@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Meus eventos</h1>
-<a href="/org/events/new">Novo evento</a>
-<ul>
-{% for e in events %}<li data-event-id="{{ e.id }}"><a href="/org/events/{{ e.id }}">{{ e.name }}</a> <span>{{ e.status | status_label }}</span></li>
+<div class="page-head"><h1>Meus eventos</h1><a class="btn" href="/org/events/new">Novo evento</a></div>
+{% if events %}
+<ul class="list card" style="padding:0">
+{% for e in events %}<li data-event-id="{{ e.id }}"><a href="/org/events/{{ e.id }}">{{ e.name }}</a> <span data-status="{{ e.status }}">{{ e.status | status_label }}</span></li>
 {% endfor %}
 </ul>
+{% else %}<p class="empty">Nenhum evento ainda. <a href="/org/events/new">Crie o primeiro</a>.</p>{% endif %}
 {% endblock %}

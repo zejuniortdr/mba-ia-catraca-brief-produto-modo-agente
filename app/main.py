@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from app import auth, db, gateway
@@ -54,6 +55,7 @@ def create_app() -> FastAPI:
     async def healthz():
         return {"ok": True}
 
+    app.mount("/static", StaticFiles(directory="app/static"), name="static")
     app.include_router(router)
     app.include_router(events_router)
     app.include_router(cancel_router)

@@ -1,6 +1,8 @@
 {% for m in errors %}<p class="error">{{ m }}</p>{% endfor %}
-<label>Nome <input name="name" value="{{ f.name or '' }}"></label>
-<label>Início <input type="datetime-local" name="starts_at" value="{{ f.starts_at or '' }}"></label>
-<label>Local <input name="venue" value="{{ f.venue or '' }}"></label>
-<label>Lotação <input name="capacity" value="{{ f.capacity or '' }}"></label>
-<label>Preço (R$) <input name="price" value="{{ f.price or '' }}"></label>
+<div class="form-grid">
+<label>Nome <input name="name" value="{{ f.name or '' }}" required></label>
+<label>Início <input type="datetime-local" name="starts_at" value="{{ f.starts_at or '' }}" required></label>
+<label>Local <input name="venue" value="{{ f.venue or '' }}" required></label>
+<label>Lotação <input name="capacity" inputmode="numeric" value="{{ f.capacity or '' }}" required></label>
+<label>Preço (R$) <input name="price" inputmode="decimal" placeholder="100,00" value="{{ f.price or '' }}" required></label>
+</div>

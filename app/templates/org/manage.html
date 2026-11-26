@@ -1,27 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
 {% set e = event %}
-<h1 id="event-name">{{ e.name }}</h1>
-<span id="event-status">{{ e.status | status_label }}</span>
-<ul>
-  <li>Data: {{ e.starts_at.astimezone(tz).strftime('%d/%m/%Y %H:%M') }}</li>
-  <li>Local: {{ e.venue }}</li>
-  <li>Lotação: {{ e.capacity }}</li>
-  <li>Preço: {{ e.price_cents | brl }}</li>
-</ul>
-{% if e.status == 'draft' %}
-<form id="publish-form" method="post" action="/org/events/{{ e.id }}/publish"><button type="submit">Publicar</button></form>
-{% endif %}
-{% if e.status != 'cancelled' %}
-<form id="edit-form" method="post" action="/org/events/{{ e.id }}/edit">
-{% set f = form or {'name': e.name, 'venue': e.venue, 'capacity': e.capacity,
-  'starts_at': e.starts_at.astimezone(tz).strftime('%Y-%m-%dT%H:%M'),
-  'price': ('%d,%02d' % (e.price_cents // 100, e.price_cents % 100))} %}
-{% include "org/_form_fields.html" %}
-<button type="submit">Salvar</button>
-</form>
-{% endif %}
-{% include "org/_checkin.html" ignore missing %}
-{% include "org/_cancel.html" ignore missing %}
-{% include "org/_panel.html" ignore missing %}
+<div class="page-head">
+  <div><a href="/org/events">← Meus eventos</a>
+  <h1 id="event-name">{{ e.name }}</h1></div>
+  <span data-status="{{ e.status }}" id="event-status">{{ e.status | status_label }}</span>
+</div>
+<section aria-label="Painel" style="margin-bottom:1.25rem">{% include "org/_panel.html" ignore missing %}</section>
+<div class="manage">
+  <div class="stack">
+    <section class="card stack">
+      <h2>Detalhes</h2>
+      <ul class="facts">
+        <li>Data: {{ e.starts_at.astimezone(tz).strftime('%d/%m/%Y %H:%M') }}</li>
+        <li>Local: {{ e.venue }}</li>
+        <li>Lotação: {{ e.capacity }}</li>
+        <li>Preço: {{ e.price_cents | brl }}</li>
+      </ul>
+      {% if e.status == 'draft' %}
+      <form id="publish-form" method="post" action="/org/events/{{ e.id }}/publish"><button type="submit">Publicar</button></form>
+      {% endif %}
+    </section>
+    {% if e.status != 'cancelled' %}
+    <section class="card">
+      <h2>Editar</h2>
+      <form class="form" id="edit-form" method="post" action="/org/events/{{ e.id }}/edit">
+      {% set f = form or {'name': e.name, 'venue': e.venue, 'capacity': e.capacity,
+        'starts_at': e.starts_at.astimezone(tz).strftime('%Y-%m-%dT%H:%M'),
+        'price': ('%d,%02d' % (e.price_cents // 100, e.price_cents % 100))} %}
+      {% include "org/_form_fields.html" %}
+      <div><button type="submit">Salvar</button></div>
+      </form>
+    </section>
+    {% endif %}
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>Check-in</h2>
+      {% include "org/_checkin.html" ignore missing %}
+    </section>
+    <section class="card">
+      <h2>Cancelamento</h2>
+      {% include "org/_cancel.html" ignore missing %}
+    </section>
+  </div>
+</div>
 {% endblock %}

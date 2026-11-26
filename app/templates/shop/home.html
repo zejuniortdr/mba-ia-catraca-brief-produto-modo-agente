@@ -1,6 +1,14 @@
 {% extends "base.html" %}
-{% block content %}<h1>Eventos</h1>
-<ul>
-{% for e in events %}<li data-event-id="{{ e.id }}"><a href="/events/{{ e.id }}">{{ e.name }}</a> — {{ e.starts_at.astimezone(tz).strftime('%d/%m/%Y %H:%M') }} — {{ e.venue }} — {{ e.price_cents | brl }}</li>
+{% block content %}
+<div class="page-head"><div><h1>Eventos</h1><p class="sub">Shows, workshops e meetups com ingressos à venda.</p></div></div>
+{% if events %}
+<ul class="grid">
+{% for e in events %}<li class="card event-card" data-event-id="{{ e.id }}">
+  <a class="title" href="/events/{{ e.id }}">{{ e.name }}</a>
+  <span class="meta">{{ e.starts_at.astimezone(tz).strftime('%d/%m/%Y %H:%M') }} · {{ e.venue }}</span>
+  <span class="price">{{ e.price_cents | brl }}</span>
+</li>
 {% endfor %}
-</ul>{% endblock %}
+</ul>
+{% else %}<p class="empty">Nenhum evento à venda no momento.</p>{% endif %}
+{% endblock %}
