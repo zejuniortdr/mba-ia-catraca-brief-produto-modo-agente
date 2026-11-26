@@ -7,6 +7,7 @@ from fastapi.exceptions import HTTPException
 from starlette.middleware.sessions import SessionMiddleware
 
 from app import auth, db
+from app.events import router as events_router
 from app.routes import router
 from app.seed import seed
 from app.web import render
@@ -47,6 +48,7 @@ def create_app() -> FastAPI:
         return {"ok": True}
 
     app.include_router(router)
+    app.include_router(events_router)
     return app
 
 

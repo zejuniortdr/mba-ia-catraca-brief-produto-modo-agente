@@ -1,6 +1,4 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Form, Request
 from fastapi.responses import RedirectResponse
 
 from app import auth, db
@@ -67,9 +65,3 @@ async def login(request: Request, email: str = Form(""), password: str = Form(""
 async def logout(request: Request):
     request.session.clear()
     return _redirect("/")
-
-
-@router.get("/org/events")
-async def org_events(request: Request, user: Annotated[dict, Depends(auth.require_organizer)]):
-    # placeholder: F02 replaces this handler
-    return render(request, "org/events.html", user)

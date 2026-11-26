@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Meus eventos</h1>
+<a href="/org/events/new">Novo evento</a>
+<ul>
+{% for e in events %}<li data-event-id="{{ e.id }}"><a href="/org/events/{{ e.id }}">{{ e.name }}</a> <span>{{ e.status | status_label }}</span></li>
+{% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+{% set e = event %}
+<h1 id="event-name">{{ e.name }}</h1>
+<span id="event-status">{{ e.status | status_label }}</span>
+<ul>
+  <li>Data: {{ e.starts_at.astimezone(tz).strftime('%d/%m/%Y %H:%M') }}</li>
+  <li>Local: {{ e.venue }}</li>
+  <li>Lotação: {{ e.capacity }}</li>
+  <li>Preço: {{ e.price_cents | brl }}</li>
+</ul>
+{% if e.status == 'draft' %}
+<form id="publish-form" method="post" action="/org/events/{{ e.id }}/publish"><button type="submit">Publicar</button></form>
+{% endif %}
+<form id="edit-form" method="post" action="/org/events/{{ e.id }}/edit">
+{% set f = form or {'name': e.name, 'venue': e.venue, 'capacity': e.capacity,
+  'starts_at': e.starts_at.astimezone(tz).strftime('%Y-%m-%dT%H:%M'),
+  'price': ('%d,%02d' % (e.price_cents // 100, e.price_cents % 100))} %}
+{% include "org/_form_fields.html" %}
+<button type="submit">Salvar</button>
+</form>
+{% include "org/_checkin.html" ignore missing %}
+{% include "org/_cancel.html" ignore missing %}
+{% include "org/_panel.html" ignore missing %}
+{% endblock %}
