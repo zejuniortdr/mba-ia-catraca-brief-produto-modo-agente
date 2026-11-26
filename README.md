@@ -8,7 +8,6 @@
 ![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 ![pytest](https://img.shields.io/badge/tests-pytest-0A9EDC?logo=pytest&logoColor=white)
 [![Ruff](https://img.shields.io/badge/lint-ruff-D7FF64?logo=ruff&logoColor=black)](https://github.com/astral-sh/ruff)
-![Built with Claude Code](https://img.shields.io/badge/built%20with-Claude%20Code-D97757?logo=anthropic&logoColor=white)
 
 Venda de ingressos para eventos pequenos (shows em bar, workshops, meetups). O MVP foi construído por agentes a partir do brief em [`docs/enunciado.md`](docs/enunciado.md). Cada feature tem spec, plano e contrato, e foi aprovada por um avaliador diferente de quem a implementou.
 
