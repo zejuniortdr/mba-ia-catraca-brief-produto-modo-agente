@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    name: Gates (ruff + pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run gates
+        run: ./scripts/gates.sh
+
+  harness:
+    name: Harness (up, smoke, down)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Up
+        run: ./scripts/up.sh
+      - name: Smoke
+        run: |
+          set -euo pipefail
+          WEB=http://localhost:8000
+          curl -fsS "$WEB/healthz"
+          # seed carregada: as tres contas entram (303)
+          for e in org.a@catraca.local org.b@catraca.local participante@catraca.local; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$WEB/login" -d "email=$e&password=catraca123")
+            test "$code" = 303 || { echo "login $e -> $code"; exit 1; }
+          done
+          # API de parceiros: sem chave 401, com chave 200
+          test "$(curl -s -o /dev/null -w '%{http_code}' "$WEB/api/partner/events")" = 401
+          curl -fsS -H "X-Api-Key: catraca-parceiro-2026" "$WEB/api/partner/events"
+      - name: Down leaves nothing running
+        run: |
+          ./scripts/down.sh
+          if curl -s -m 3 http://localhost:8000/healthz; then echo "porta ainda responde"; exit 1; fi
+          test "$(docker compose ps -a -q | wc -l)" -eq 0
+      - name: Up again (seed idempotente)
+        run: |
+          ./scripts/up.sh
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:8000/login -d 'email=org.a@catraca.local&password=catraca123')" = 303
+          ./scripts/down.sh
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs --no-color --tail=200 || true
