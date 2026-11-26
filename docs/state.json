@@ -1,12 +1,75 @@
 {
   "project": "catraca",
   "features": [
-    {"id": "F01", "name": "Fundação", "wave": 1, "dir": "docs/features/F01-fundacao", "status": "pending", "branch": "feat/f01-fundacao", "pr": null, "latestReport": null},
-    {"id": "F02", "name": "Eventos do organizador", "wave": 2, "dir": "docs/features/F02-eventos", "status": "pending", "branch": "feat/f02-eventos", "pr": null, "latestReport": null},
-    {"id": "F03", "name": "Vitrine e compra", "wave": 3, "dir": "docs/features/F03-compra", "status": "pending", "branch": "feat/f03-compra", "pr": null, "latestReport": null},
-    {"id": "F04", "name": "API de parceiros", "wave": 4, "dir": "docs/features/F04-api-parceiros", "status": "pending", "branch": "feat/f04-api-parceiros", "pr": null, "latestReport": null},
-    {"id": "F05", "name": "Check-in", "wave": 5, "dir": "docs/features/F05-checkin", "status": "pending", "branch": "feat/f05-checkin", "pr": null, "latestReport": null},
-    {"id": "F06", "name": "Cancelamento", "wave": 5, "dir": "docs/features/F06-cancelamento", "status": "pending", "branch": "feat/f06-cancelamento", "pr": null, "latestReport": null},
-    {"id": "F07", "name": "Painel", "wave": 5, "dir": "docs/features/F07-painel", "status": "pending", "branch": "feat/f07-painel", "pr": null, "latestReport": null}
+    {
+      "id": "F01",
+      "name": "Fundação",
+      "wave": 1,
+      "dir": "docs/features/F01-fundacao",
+      "status": "done",
+      "branch": "feat/f01-fundacao",
+      "pr": 4,
+      "latestReport": "docs/features/F01-fundacao/reports/20261126-1401-45f19c1.md"
+    },
+    {
+      "id": "F02",
+      "name": "Eventos do organizador",
+      "wave": 2,
+      "dir": "docs/features/F02-eventos",
+      "status": "pending",
+      "branch": "feat/f02-eventos",
+      "pr": null,
+      "latestReport": null
+    },
+    {
+      "id": "F03",
+      "name": "Vitrine e compra",
+      "wave": 3,
+      "dir": "docs/features/F03-compra",
+      "status": "pending",
+      "branch": "feat/f03-compra",
+      "pr": null,
+      "latestReport": null
+    },
+    {
+      "id": "F04",
+      "name": "API de parceiros",
+      "wave": 4,
+      "dir": "docs/features/F04-api-parceiros",
+      "status": "pending",
+      "branch": "feat/f04-api-parceiros",
+      "pr": null,
+      "latestReport": null
+    },
+    {
+      "id": "F05",
+      "name": "Check-in",
+      "wave": 5,
+      "dir": "docs/features/F05-checkin",
+      "status": "pending",
+      "branch": "feat/f05-checkin",
+      "pr": null,
+      "latestReport": null
+    },
+    {
+      "id": "F06",
+      "name": "Cancelamento",
+      "wave": 5,
+      "dir": "docs/features/F06-cancelamento",
+      "status": "pending",
+      "branch": "feat/f06-cancelamento",
+      "pr": null,
+      "latestReport": null
+    },
+    {
+      "id": "F07",
+      "name": "Painel",
+      "wave": 5,
+      "dir": "docs/features/F07-painel",
+      "status": "pending",
+      "branch": "feat/f07-painel",
+      "pr": null,
+      "latestReport": null
+    }
   ]
 }

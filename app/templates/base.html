@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><title>Catraca</title></head>
+<body>
+<nav>
+  <a href="/">Vitrine</a>
+  {% if user and user.role == 'participant' %}<a href="/me/tickets">Meus ingressos</a>{% endif %}
+  {% if user and user.role == 'organizer' %}<a href="/org/events">Área do organizador</a>{% endif %}
+  {% if user %}
+    <span>{{ user.name }}</span>
+    <form method="post" action="/logout" style="display:inline"><button type="submit">Sair</button></form>
+  {% else %}
+    <a href="/login">Entrar</a> <a href="/signup">Cadastrar</a>
+  {% endif %}
+</nav>
+<main>{% block content %}{% endblock %}</main>
+</body>
+</html>
