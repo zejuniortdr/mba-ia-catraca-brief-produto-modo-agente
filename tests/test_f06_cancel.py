@@ -4,7 +4,6 @@ from tests.helpers_f02 import create
 from tests.helpers_f03 import make_ticket
 
 
-
 async def published(org, **over):
     eid = await create(org, **over)
     assert (await org.post(f"/org/events/{eid}/publish")).status_code == 303
