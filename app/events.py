@@ -129,6 +129,10 @@ async def edit(event_id: str, request: Request, user: Organizer, conn: Conn):
     event = await cur.fetchone()
     if event is None:
         return not_found(request, user)
+    if event["status"] == "cancelled":
+        ctx = await manage_context(request, conn, event, user)
+        ctx["errors"] = ["Evento cancelado não pode ser editado"]
+        return render_manage(ctx, 409)
     form = await request.form()
     data, errors = parse_event_form(form, datetime.now(TZ))
     if data and data["capacity"] < (occupied := await occupied_seats(conn, event_id)):

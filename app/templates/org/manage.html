@@ -12,6 +12,7 @@
 {% if e.status == 'draft' %}
 <form id="publish-form" method="post" action="/org/events/{{ e.id }}/publish"><button type="submit">Publicar</button></form>
 {% endif %}
+{% if e.status != 'cancelled' %}
 <form id="edit-form" method="post" action="/org/events/{{ e.id }}/edit">
 {% set f = form or {'name': e.name, 'venue': e.venue, 'capacity': e.capacity,
   'starts_at': e.starts_at.astimezone(tz).strftime('%Y-%m-%dT%H:%M'),
@@ -19,6 +20,7 @@
 {% include "org/_form_fields.html" %}
 <button type="submit">Salvar</button>
 </form>
+{% endif %}
 {% include "org/_checkin.html" ignore missing %}
 {% include "org/_cancel.html" ignore missing %}
 {% include "org/_panel.html" ignore missing %}
