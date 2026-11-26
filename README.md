@@ -36,6 +36,20 @@ O `./scripts/down.sh` para e remove os containers do produto e dos gates. O volu
 curl -s -H "X-Api-Key: catraca-parceiro-2026" http://localhost:8000/api/partner/events
 ```
 
+## Cartões de teste (gateway simulado)
+
+O gateway simulado decide pelos 4 últimos dígitos do cartão, conforme o brief ([`docs/enunciado.md`](docs/enunciado.md), seção "Gateway de pagamento simulado"; implementação em [`app/gateway.py`](app/gateway.py)). O cartão precisa ter 16 dígitos; fora disso, a compra é rejeitada antes de criar o ingresso.
+
+| Final | Exemplo | Resultado |
+|---|---|---|
+| 0001 | `4000000000000001` | aprovado em 2–5 s |
+| 0002 | `4000000000000002` | recusado em 2–5 s |
+| 0003 | `4000000000000003` | aprovado em 30–40 s |
+| 0004 | `4000000000000004` | recusado em 30–40 s |
+| qualquer outro | `1111111111111111` | recusado em 2–5 s |
+
+A compra nasce pendente e ocupa a vaga até a resposta do gateway. Recarregue a página para ver o status novo.
+
 ## Mapa dos artefatos
 
 | Artefato | Caminho |
