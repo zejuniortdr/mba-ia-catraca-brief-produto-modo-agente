@@ -1,0 +1,12 @@
+# F03 — Vitrine e compra: plano
+
+Spec: `spec.md`. Branch `feat/f03-compra`. Commit ao fim de cada etapa. Nos testes `GATEWAY_DELAY_SCALE=0.01` (2–5 s → 20–50 ms; 30–40 s → 0,3–0,4 s).
+
+1. **Gateway.** `tests/test_f03_gateway.py`: `test_decide_table` (0001 → (True, 2–5×scale), 0002 → False, 0003 → True com 30–40×scale, 0004 → False 30–40×scale, 9999 → False 2–5×scale; monkeypatch scale=1 para checar faixas), `test_apply_result_only_pending` (ticket `cancelled` continua `cancelled` após `apply_result(..., True)`).
+2. **Serviço de compra.** `tests/test_f03_purchase.py`: `test_purchase_pending_and_price_recorded`, `test_invalid_card_creates_nothing` (`123`, 15 dígitos, letras), `test_draft_event_not_available`, `test_sold_out_when_full` (capacidade 1, 1 pending → `SoldOut`), `test_pending_occupies_seat` (`available_seats` cai antes do gateway), `test_approved_confirms` (cartão 0001; aguardar ≤ 1 s → `confirmed`), `test_declined_frees_seat` (0002 → `declined`, `available_seats` volta), `test_code_unique_format` (`^[A-Z0-9]{8}$`, 20 compras códigos distintos).
+3. **Concorrência (R07).** `test_concurrent_purchases_never_exceed_capacity`: 5 rodadas, cada uma evento novo de lotação 5, 30 `purchase` simultâneos via `asyncio.gather` (cada um com sua conexão do pool) → exatamente 5 sucessos e 25 `SoldOut`; `occupied_seats == 5`.
+4. **Reinício.** `test_reschedule_pending_resolves`: insere ticket `pending` com `gateway_due_at` no passado e `gateway_approved=true`; `reschedule_pending()`; aguardar → `confirmed`.
+5. **Vitrine e página do evento.** `tests/test_f03_shop.py`: `test_showcase_only_published` (rascunho fora, publicado dentro, cancelado por SQL fora), `test_event_page_buy_form`, `test_event_page_sold_out_message` (lotação 1 ocupada → `Ingressos esgotados`, sem `buy-form`).
+6. **Compra web e Meus ingressos.** `test_visitor_buy_redirects_login`, `test_signup_then_buy_shows_pending_in_my_tickets` (XF-2: `/signup` → buy → `/me/tickets` com `pendente`, nome do evento, código), `test_my_tickets_confirmed_after_gateway`, `test_buy_invalid_card_422`, `test_buy_sold_out_409_message`, `test_my_tickets_only_own`.
+7. **Integração com F02 (XF-3).** `test_price_change_applies_to_new_purchases_only` (compra a R$100, org edita para R$150, nova compra → `price_cents` 10000 e 15000), `test_capacity_below_web_purchases_rejected` (2 compras web, edit capacity 1 → 422).
+8. `./scripts/gates.sh` verde, push, PR.
