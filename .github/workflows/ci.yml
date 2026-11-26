@@ -56,3 +56,22 @@ jobs:
       - name: Logs on failure
         if: failure()
         run: docker compose logs --no-color --tail=200 || true
+
+  harness-container:
+    name: Harness via container (host sem bash/Compose)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build harness image
+        run: docker build -t catraca-harness harness
+      - name: Up, smoke, down through container
+        run: |
+          set -euo pipefail
+          H="docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:$PWD -w $PWD catraca-harness"
+          $H ./scripts/up.sh
+          curl -fsS http://localhost:8000/healthz
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:8000/login -d 'email=org.a@catraca.local&password=catraca123')" = 303
+          $H ./scripts/down.sh
+          if curl -s -m 3 http://localhost:8000/healthz; then echo "porta ainda responde"; exit 1; fi
+          test "$(docker compose ps -a -q | wc -l)" -eq 0
