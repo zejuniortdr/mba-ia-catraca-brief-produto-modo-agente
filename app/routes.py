@@ -11,11 +11,6 @@ def _redirect(url: str) -> RedirectResponse:
     return RedirectResponse(url, status_code=303)
 
 
-@router.get("/")
-async def home(request: Request):
-    return render(request, "home.html", await auth.current_user(request))
-
-
 @router.get("/signup")
 async def signup_form(request: Request):
     return render(request, "signup.html", await auth.current_user(request))

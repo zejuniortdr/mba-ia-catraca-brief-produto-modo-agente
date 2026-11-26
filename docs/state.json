@@ -26,10 +26,10 @@
       "name": "Vitrine e compra",
       "wave": 3,
       "dir": "docs/features/F03-compra",
-      "status": "pending",
+      "status": "done",
       "branch": "feat/f03-compra",
-      "pr": null,
-      "latestReport": null
+      "pr": 6,
+      "latestReport": "docs/features/F03-compra/reports/20261126-1413-1bf3a26.md"
     },
     {
       "id": "F04",

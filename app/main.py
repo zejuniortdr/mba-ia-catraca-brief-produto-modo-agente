@@ -1,15 +1,15 @@
 import os
 from contextlib import asynccontextmanager
-from importlib.util import find_spec
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import HTTPException
 from starlette.middleware.sessions import SessionMiddleware
 
-from app import auth, db
+from app import auth, db, gateway
 from app.events import router as events_router
 from app.routes import router
 from app.seed import seed
+from app.shop import router as shop_router
 from app.web import render
 
 
@@ -19,11 +19,9 @@ async def lifespan(app: FastAPI):
     await db.apply_schema()
     async with db.pool.connection() as conn:
         await seed(conn)
-    if find_spec("app.gateway"):  # F03 provides it
-        from app import gateway
-
-        await gateway.reschedule_pending()
+    await gateway.reschedule_pending()
     yield
+    await gateway.cancel_pending_tasks()
     await db.pool.close()
 
 
@@ -49,6 +47,7 @@ def create_app() -> FastAPI:
 
     app.include_router(router)
     app.include_router(events_router)
+    app.include_router(shop_router)
     return app
 
 
