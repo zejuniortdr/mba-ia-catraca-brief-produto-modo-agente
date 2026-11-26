@@ -10,6 +10,7 @@ Catraca: venda de ingressos para eventos pequenos. Brief em `docs/enunciado.md`,
 | Derrubar tudo | `./scripts/down.sh` |
 | Gates (ruff + pytest, banco de teste isolado) | `./scripts/gates.sh` |
 | Gates só de um teste | `./scripts/gates.sh tests/test_f03_purchase.py::test_nome` |
+| Mesmos comandos via container (host sem bash/Compose v2) | `docker build -t catraca-harness harness` e `docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:$PWD -w $PWD catraca-harness ./scripts/up.sh` (idem `down.sh`, `gates.sh`) |
 | CI (GitHub Actions: gates + harness up/smoke/down) | `.github/workflows/ci.yml`, roda em push na `main` e em PR |
 | SQL no banco do produto | `docker compose exec -T db psql -U catraca -d catraca -c "..."` |
 

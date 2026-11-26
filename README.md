@@ -20,11 +20,25 @@ Venda de ingressos para eventos pequenos (shows em bar, workshops, meetups). O M
 | Derrubar tudo | `./scripts/down.sh` |
 | Gates (ruff + pytest contra Postgres real, em projeto compose isolado) | `./scripts/gates.sh` |
 
-**CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): todo push na `main` e todo PR passam por dois jobs. `gates` roda `./scripts/gates.sh`. `harness` sobe o produto, testa saúde, seed e chave da API, derruba e confere que nada continua rodando, e sobe de novo para provar que a seed é idempotente.
+**CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): todo push na `main` e todo PR passam por três jobs. `gates` roda `./scripts/gates.sh`. `harness` sobe o produto, testa saúde, seed e chave da API, derruba e confere que nada continua rodando, e sobe de novo para provar que a seed é idempotente. `harness-container` repete subir, smoke e derrubar pela rota por container.
 
 A subida não pede nenhum outro passo. O gateway de pagamento é simulado e não precisa de chave real.
 
 O `./scripts/down.sh` para e remove os containers do produto e dos gates. O volume do banco é mantido, então, ao subir de novo, a seed roda outra vez sobre os dados existentes sem erro. Para usar outra porta, rode `WEB_PORT=8080 ./scripts/up.sh`.
+
+### Alternativa: rodar os comandos por container
+
+Use esta rota se a máquina não tiver bash ou Docker Compose v2 (o `--wait` do `up.sh` pede Compose ≥ 2.17). Ela só precisa do Docker Engine. A imagem [`harness/Dockerfile`](harness/Dockerfile) traz Docker CLI, Compose e bash, e executa os mesmos `scripts/*.sh` contra o daemon do host, pelo socket. O repositório é montado no mesmo caminho, então o nome do projeto Compose é o mesmo da rota direta: dá para subir por uma rota e derrubar pela outra.
+
+```bash
+docker build -t catraca-harness harness          # uma vez
+H="docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:$PWD -w $PWD catraca-harness"
+$H ./scripts/up.sh       # subir (http://localhost:8000)
+$H ./scripts/down.sh     # derrubar
+$H ./scripts/gates.sh    # gates
+```
+
+Para outra porta, passe `-e WEB_PORT=8080` no `docker run`. No Docker Desktop (macOS), `/var/run/docker.sock` já existe por padrão.
 
 ## Endereços
 
