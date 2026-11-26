@@ -36,10 +36,10 @@
       "name": "API de parceiros",
       "wave": 4,
       "dir": "docs/features/F04-api-parceiros",
-      "status": "pending",
+      "status": "done",
       "branch": "feat/f04-api-parceiros",
-      "pr": null,
-      "latestReport": null
+      "pr": 7,
+      "latestReport": "docs/features/F04-api-parceiros/reports/20261126-1420-eb26231.md"
     },
     {
       "id": "F05",
