@@ -1,0 +1,2 @@
+<form id="checkin-form" method="post" action="/org/events/{{ event.id }}/checkin"><input name="code"> <button type="submit">Check-in</button></form>
+{% if checkin_result %}<p id="checkin-result">{{ checkin_result }}</p>{% endif %}
