@@ -1,3 +1,6 @@
+import asyncio
+import re
+
 import pytest
 
 from app.panel import panel_metrics
@@ -85,3 +88,67 @@ async def test_other_org_cannot_see_panel(org_a, org_b, db):
     # Assert
     assert r.status_code == 404
     assert 'id="panel"' not in r.text
+
+
+KEY = {"X-Api-Key": "catraca-parceiro-2026"}
+OK, SLOW = "4000000000000001", "4000000000000003"
+
+
+async def _published(org, **over):
+    eid = (await org.post("/org/events/new", data=form(**over))).headers["location"].rsplit("/", 1)[1]
+    await org.post(f"/org/events/{eid}/publish")
+    return eid
+
+
+async def _metrics(org, eid):
+    html = (await org.get(f"/org/events/{eid}")).text
+    return dict(re.findall(r'data-metric="(\w+)">([^<]*)<', html))
+
+
+async def _api_buy(client, eid, card):
+    r = await client.post(f"/api/partner/events/{eid}/purchases", headers=KEY, json={"buyerEmail": "a@b.io", "cardNumber": card})
+    assert r.status_code == 202
+
+
+@pytest.mark.anyio
+async def test_web_and_api_purchases_count(org_a, participant, client):
+    # Arrange
+    eid = await _published(org_a, capacity="6")
+
+    # Act
+    await participant.post(f"/events/{eid}/buy", data={"card_number": OK})
+    await _api_buy(client, eid, OK)
+    await _api_buy(client, eid, SLOW)
+    await asyncio.sleep(0.3)
+
+    # Assert
+    m = await _metrics(org_a, eid)
+    assert (m["confirmed"], m["pending"], m["available"]) == ("2", "1", "3")
+
+
+@pytest.mark.anyio
+async def test_price_change_revenue(org_a, participant):
+    # Arrange
+    eid = await _published(org_a, capacity="4")
+    await participant.post(f"/events/{eid}/buy", data={"card_number": OK})
+
+    # Act
+    await org_a.post(f"/org/events/{eid}/edit", data=form(capacity="4", price="150,00"))
+    await participant.post(f"/events/{eid}/buy", data={"card_number": OK})
+    await asyncio.sleep(0.3)
+
+    # Assert
+    assert (await _metrics(org_a, eid))["revenue"] == "R$ 250,00"
+
+
+@pytest.mark.anyio
+async def test_capacity_increase_reflects_available(org_a):
+    # Arrange
+    eid = await _published(org_a, capacity="2")
+    before = int((await _metrics(org_a, eid))["available"])
+
+    # Act
+    await org_a.post(f"/org/events/{eid}/edit", data=form(capacity="3"))
+
+    # Assert
+    assert (before, int((await _metrics(org_a, eid))["available"])) == (2, 3)
