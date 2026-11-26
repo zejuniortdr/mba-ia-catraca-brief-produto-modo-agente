@@ -66,10 +66,10 @@
       "name": "Painel",
       "wave": 5,
       "dir": "docs/features/F07-painel",
-      "status": "pending",
+      "status": "done",
       "branch": "feat/f07-painel",
-      "pr": null,
-      "latestReport": null
+      "pr": 8,
+      "latestReport": "docs/features/F07-painel/reports/20261126-1427-1679456.md"
     }
   ]
 }
