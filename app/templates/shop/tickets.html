@@ -1,6 +1,13 @@
 {% extends "base.html" %}
-{% block content %}<h1>Meus ingressos</h1>
+{% block content %}
+<div class="page-head"><div><h1>Meus ingressos</h1><p class="sub">Recarregue a página para ver o status atualizado.</p></div></div>
+{% if tickets %}
 <table>
-{% for t in tickets %}<tr data-ticket-id="{{ t.id }}"><td class="event">{{ t.event_name }}</td><td class="status">{{ t.status | status_label }}</td><td class="code">{{ t.code }}</td></tr>
+<thead><tr><th scope="col">Evento</th><th scope="col">Status</th><th scope="col">Código</th></tr></thead>
+<tbody>
+{% for t in tickets %}<tr data-ticket-id="{{ t.id }}"><td class="event">{{ t.event_name }}</td><td data-status="{{ t.status }}" class="status">{{ t.status | status_label }}</td><td class="code">{{ t.code }}</td></tr>
 {% endfor %}
-</table>{% endblock %}
+</tbody>
+</table>
+{% else %}<p class="empty">Você ainda não comprou ingressos. <a href="/">Ver eventos</a></p>{% endif %}
+{% endblock %}

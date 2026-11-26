@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Novo evento</h1>
-<form id="event-form" method="post" action="/org/events/new">
+<div class="page-head"><div><h1>Novo evento</h1><p class="sub">O evento nasce como rascunho; publique na página de gestão.</p></div></div>
+<form class="card form" id="event-form" method="post" action="/org/events/new" style="max-width:640px">
 {% set f = form %}{% include "org/_form_fields.html" %}
-<button type="submit">Criar evento</button>
+<div><button type="submit">Criar evento</button> <a class="btn btn-ghost" href="/org/events">Voltar</a></div>
 </form>
 {% endblock %}
