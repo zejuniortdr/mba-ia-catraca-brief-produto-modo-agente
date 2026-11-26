@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Novo evento</h1>
+<form id="event-form" method="post" action="/org/events/new">
+{% set f = form %}{% include "org/_form_fields.html" %}
+<button type="submit">Criar evento</button>
+</form>
+{% endblock %}
