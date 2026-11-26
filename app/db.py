@@ -8,7 +8,23 @@ from psycopg_pool import AsyncConnectionPool
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://catraca:catraca@localhost:5432/catraca")
 
-pool = AsyncConnectionPool(DATABASE_URL, min_size=1, max_size=20, open=False, kwargs={"row_factory": dict_row})
+
+
+def _new_pool() -> AsyncConnectionPool:
+    return AsyncConnectionPool(
+        DATABASE_URL, min_size=1, max_size=20, open=False, kwargs={"row_factory": dict_row}
+    )
+
+
+pool = _new_pool()
+
+
+async def open_pool() -> None:
+    """Open the pool; a closed pool cannot be reused, so build a fresh one (use `db.pool`, never import it)."""
+    global pool
+    if pool._closed:
+        pool = _new_pool()
+    await pool.open(wait=True)
 
 
 async def get_conn() -> AsyncIterator[AsyncConnection]:
