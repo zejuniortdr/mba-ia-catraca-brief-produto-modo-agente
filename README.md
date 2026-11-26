@@ -1,5 +1,15 @@
 # Catraca — do brief ao produto em modo agente
 
+[![CI](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zejuniortdr/mba-ia-catraca-brief-produto-modo-agente/actions/workflows/ci.yml)
+![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Jinja2](https://img.shields.io/badge/Jinja2-SSR-B41717?logo=jinja&logoColor=white)
+![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![pytest](https://img.shields.io/badge/tests-pytest-0A9EDC?logo=pytest&logoColor=white)
+[![Ruff](https://img.shields.io/badge/lint-ruff-D7FF64?logo=ruff&logoColor=black)](https://github.com/astral-sh/ruff)
+![Built with Claude Code](https://img.shields.io/badge/built%20with-Claude%20Code-D97757?logo=anthropic&logoColor=white)
+
 Venda de ingressos para eventos pequenos (shows em bar, workshops, meetups). O MVP foi construído por agentes a partir do brief em [`docs/enunciado.md`](docs/enunciado.md). Cada feature tem spec, plano e contrato, e foi aprovada por um avaliador diferente de quem a implementou.
 
 ## Como rodar
@@ -11,6 +21,8 @@ Venda de ingressos para eventos pequenos (shows em bar, workshops, meetups). O M
 | Subir tudo (build, banco, app e seed) | `./scripts/up.sh` |
 | Derrubar tudo | `./scripts/down.sh` |
 | Gates (ruff + pytest contra Postgres real, em projeto compose isolado) | `./scripts/gates.sh` |
+
+**CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): todo push na `main` e todo PR passam por dois jobs. `gates` roda `./scripts/gates.sh`. `harness` sobe o produto, testa saúde, seed e chave da API, derruba e confere que nada continua rodando, e sobe de novo para provar que a seed é idempotente.
 
 A subida não pede nenhum outro passo. O gateway de pagamento é simulado e não precisa de chave real.
 

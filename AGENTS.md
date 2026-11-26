@@ -10,6 +10,7 @@ Catraca: venda de ingressos para eventos pequenos. Brief em `docs/enunciado.md`,
 | Derrubar tudo | `./scripts/down.sh` |
 | Gates (ruff + pytest, banco de teste isolado) | `./scripts/gates.sh` |
 | Gates só de um teste | `./scripts/gates.sh tests/test_f03_purchase.py::test_nome` |
+| CI (GitHub Actions: gates + harness up/smoke/down) | `.github/workflows/ci.yml`, roda em push na `main` e em PR |
 | SQL no banco do produto | `docker compose exec -T db psql -U catraca -d catraca -c "..."` |
 
 Produto e API de parceiros: `http://localhost:${WEB_PORT:-8000}`. Chave de parceiro: `catraca-parceiro-2026`. Seed (senha `catraca123`): `org.a@catraca.local`, `org.b@catraca.local`, `participante@catraca.local`.
