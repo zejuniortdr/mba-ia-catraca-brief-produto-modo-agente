@@ -224,3 +224,6 @@ __marimo__/
 
 # Local agent scratch
 .superpowers/
+
+# Deps vêm de requirements.txt; uv cria lock vazio se rodar na raiz
+uv.lock
