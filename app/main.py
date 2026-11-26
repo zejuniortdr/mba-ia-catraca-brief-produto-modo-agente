@@ -3,10 +3,13 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import HTTPException
+from fastapi.responses import JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 
 from app import auth, db, gateway
 from app.events import router as events_router
+from app.partner_api import Unauthorized
+from app.partner_api import router as partner_router
 from app.routes import router
 from app.seed import seed
 from app.shop import router as shop_router
@@ -41,6 +44,10 @@ def create_app() -> FastAPI:
 
         return await http_exception_handler(request, exc)
 
+    @app.exception_handler(Unauthorized)
+    async def unauthorized(request: Request, exc: Unauthorized):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+
     @app.get("/healthz")
     async def healthz():
         return {"ok": True}
@@ -48,6 +55,7 @@ def create_app() -> FastAPI:
     app.include_router(router)
     app.include_router(events_router)
     app.include_router(shop_router)
+    app.include_router(partner_router)
     return app
 
 
