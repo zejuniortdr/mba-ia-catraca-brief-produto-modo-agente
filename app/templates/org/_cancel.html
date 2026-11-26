@@ -1,0 +1,5 @@
+{% if event.status == 'published' %}
+<form id="cancel-form" method="post" action="/org/events/{{ event.id }}/cancel" onsubmit="return confirm('Cancelar o evento? Não há volta.')"><button>Cancelar evento</button></form>
+{% elif event.status == 'cancelled' %}
+<p id="event-cancelled">Este evento foi cancelado.</p>
+{% endif %}
