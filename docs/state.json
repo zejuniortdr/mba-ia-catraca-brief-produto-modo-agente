@@ -56,10 +56,10 @@
       "name": "Cancelamento",
       "wave": 5,
       "dir": "docs/features/F06-cancelamento",
-      "status": "pending",
+      "status": "done",
       "branch": "feat/f06-cancelamento",
-      "pr": null,
-      "latestReport": null
+      "pr": 10,
+      "latestReport": "docs/features/F06-cancelamento/reports/20261126-1428-67bda99.md"
     },
     {
       "id": "F07",
