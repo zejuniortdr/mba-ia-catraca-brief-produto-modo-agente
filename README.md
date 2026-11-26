@@ -44,6 +44,7 @@ curl -s -H "X-Api-Key: catraca-parceiro-2026" http://localhost:8000/api/partner/
 | PRD (features, Provê/Consome, grafo, waves, critérios, cross-feature, fora de escopo) | [`docs/PRD.md`](docs/PRD.md) |
 | Design aprovado e plano mestre | [`docs/planning/design.md`](docs/planning/design.md), [`docs/planning/master-plan.md`](docs/planning/master-plan.md) |
 | Estado do projeto | [`docs/state.json`](docs/state.json) |
+| Fluxo do avaliador (passos 1–17) rodado na main, clone limpo | [`docs/evaluation/20261126-final-flow-e7ec2ec.md`](docs/evaluation/20261126-final-flow-e7ec2ec.md) |
 | Porta de entrada dos agentes | [`AGENTS.md`](AGENTS.md) ([`CLAUDE.md`](CLAUDE.md) aponta para ele) |
 | Receitas de avaliação e template de relatório | [`docs/features/_eval-recipes.md`](docs/features/_eval-recipes.md), [`docs/features/_report-template.md`](docs/features/_report-template.md) |
 
