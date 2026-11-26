@@ -16,10 +16,10 @@
       "name": "Eventos do organizador",
       "wave": 2,
       "dir": "docs/features/F02-eventos",
-      "status": "pending",
+      "status": "done",
       "branch": "feat/f02-eventos",
-      "pr": null,
-      "latestReport": null
+      "pr": 5,
+      "latestReport": "docs/features/F02-eventos/reports/20261126-1405-4724e95.md"
     },
     {
       "id": "F03",
